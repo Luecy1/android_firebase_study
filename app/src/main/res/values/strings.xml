@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">android_firebase_study</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>
