@@ -1,13 +1,17 @@
 package com.example.simple
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.example.simple.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun notification() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+            return
+        }
+
         val notificationChannelId = createNotificationChannel()
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .bigText("Big text")
@@ -38,33 +46,59 @@ class MainActivity : AppCompatActivity() {
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        NotificationCompat.Builder(
+        val notificationCompatBuilder = NotificationCompat.Builder(
             this,
+            notificationChannelId,
+        )
 
+        val notification = notificationCompatBuilder
+            .setStyle(bigTextStyle)
+            .setContentTitle("title ")
+            .setContentText("Content Text")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(
+                BitmapFactory.decodeResource(
+                    resources,
+                    R.drawable.ic_alarm_white_48dp
+                )
             )
+            .setContentIntent(pendingIntent)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+
+            .setCategory(Notification.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .build()
+
+        val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
+
+        notificationManagerCompat.notify(
+            (0..999).random(),
+            notification
+        )
     }
 
 
     fun createNotificationChannel(): String {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-
-            val channelId = "channel_reminder_1"
-            val channelName = "Sample Reminder"
-            val channelDescription = "Description"
-            val channelImportance = NotificationManager.IMPORTANCE_DEFAULT
-            val channelLockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
-
-            val notificationChannel = NotificationChannel(channelId, channelName, channelImportance)
-            notificationChannel.description = channelDescription
-            notificationChannel.enableVibration(false)
-            notificationChannel.lockscreenVisibility = channelLockscreenVisibility
-
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(notificationChannel)
-
-            return channelId
-        } else {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
             return ""
         }
+
+        val channelId = "channel_reminder_1"
+        val channelName = "Sample Reminder"
+        val channelDescription = "Description"
+        val channelImportance = NotificationManager.IMPORTANCE_DEFAULT
+        val channelLockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
+
+        val notificationChannel = NotificationChannel(channelId, channelName, channelImportance)
+        notificationChannel.description = channelDescription
+        notificationChannel.enableVibration(false)
+        notificationChannel.lockscreenVisibility = channelLockscreenVisibility
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(notificationChannel)
+
+        return channelId
     }
 }
