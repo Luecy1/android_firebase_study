@@ -34,14 +34,17 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        // NotificationChannelを作成する
+        // NotificationChannelごとに表示と音声を設定
         val notificationChannelId = createNotificationChannel()
+
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .bigText("Big text")
             .setBigContentTitle("Big title")
             .setSummaryText("hogehoge!")
 
         val notifyIntent = Intent(this, MainActivity::class.java)
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        notifyIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun createNotificationChannel(): String {
+    private fun createNotificationChannel(): String {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
             return ""
         }
@@ -88,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         val channelId = "channel_reminder_1"
         val channelName = "Sample Reminder"
         val channelDescription = "Description"
+        // 重要度
         val channelImportance = NotificationManager.IMPORTANCE_DEFAULT
         val channelLockscreenVisibility = NotificationCompat.VISIBILITY_PUBLIC
 
