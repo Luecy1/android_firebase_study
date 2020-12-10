@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         // NotificationChannelごとに表示と音声を設定
         val notificationChannelId = createNotificationChannel()
 
+        // BigTextStyle(Text中心の通知)
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .bigText("Big text")
             .setBigContentTitle("Big title")
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
 
+            // Category
             .setCategory(Notification.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
